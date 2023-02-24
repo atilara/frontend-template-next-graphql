@@ -1,31 +1,59 @@
 import { FormEvent, useCallback, useState } from 'react';
-import { useAuth } from "@/hooks/auth"
+import { useAuth } from '@/hooks/auth';
+import { Button, Checkbox, Form, Input } from 'antd';
 
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [form] = Form.useForm();
 
   const { signIn } = useAuth();
 
-  const handleSubmit = useCallback(async (event: FormEvent) => {
-    event.preventDefault();
+  const onFinishhandleSubmit = useCallback(
+    async (values: any) => {
 
-    const data = { email,  password }
-
-    await signIn(data);
+      console.log(values)
+      
+      await signIn(values);
     },
     [signIn]
   );
 
+  const onFinishFailed = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+
   return (
-    <>
-      <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
-        <input name="email" type="email" value={email}  required onChange={e => setEmail(e.target.value)} />
-        <input name="password" type="password" value={password} required onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Sign in</button>
-        <a href="/signup">Sign up</a>
-      </form>
-    </>
+    <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      style={{ maxWidth: 600 }}
+      initialValues={{ remember: true }}
+      onFinish={onFinishhandleSubmit}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+      form={form}
+    >
+      <Form.Item
+        label="Username"
+        name="username"
+        rules={[{ required: true, message: 'Please input your username!' }]}
+      >
+        <Input/>
+      </Form.Item>
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[{ required: true, message: 'Please input your password!' }]}
+      >
+        <Input.Password/>
+      </Form.Item>
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
-};
+}
