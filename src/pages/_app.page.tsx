@@ -2,7 +2,8 @@ import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import { ApolloProvider } from '@apollo/client';
 import { AuthProvider } from '@/hooks/auth';
-import { useApollo } from "@/lib/apollo";
+import { useApollo } from '@/lib/apollo';
+import { ConfigProvider } from 'antd';
 
 const AppHead = () => {
   return (
@@ -22,14 +23,22 @@ const AppHead = () => {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
-  const client = useApollo(pageProps.initialApolloState)
+  const client = useApollo(pageProps.initialApolloState);
 
   return (
     <ApolloProvider client={client}>
-      <AppHead />
-      <AuthProvider>
-        <Component {...pageProps} />
-      </AuthProvider>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: '#00b96b',
+          },
+        }}
+      >
+        <AppHead />
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </ConfigProvider>
     </ApolloProvider>
-  )
+  );
 }
